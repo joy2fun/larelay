@@ -22,6 +22,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
             return $isLocal ||
+                   $entry->isClientRequest() || 
                    $entry->isRequest() ||
                    $entry->isReportableException() ||
                    $entry->isFailedRequest() ||
