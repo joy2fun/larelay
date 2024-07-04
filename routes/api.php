@@ -19,4 +19,4 @@ Route::middleware('admin.auth:sanctum')->get('/user', function (Request $request
     return $request->user();
 });
 
-Route::get('endpoint/{slug}', [EndpointController::class, 'relay']);
+Route::any('endpoint/{slug}', [EndpointController::class, 'relay']);
