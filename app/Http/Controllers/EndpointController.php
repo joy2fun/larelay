@@ -23,7 +23,6 @@ class EndpointController extends Controller
 
         $responses = Http::pool(function (Pool $pool) use ($targets) {
             return $targets->map(function($item) use ($pool) {
-                dd(array_merge($item->bodyArray, request()->all()));
                 return $pool->withHeaders($item->headersArray)->{strtolower($item->method)}($item->uri, array_merge($item->bodyArray, request()->all()));
             });
         });
