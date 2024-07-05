@@ -4,10 +4,14 @@ namespace App\Admin\Controllers;
 
 use App\Models\Endpoint;
 use App\Models\EndpointTarget;
+use Dcat\Admin\Exception\AdminException;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Validator;
 
 class EndpointTargetController extends AdminController
 {
@@ -19,21 +23,28 @@ class EndpointTargetController extends AdminController
     protected function grid()
     {
         return Grid::make(EndpointTarget::with('endpoint'), function (Grid $grid) {
+            $grid->model()->orderByDesc('endpoint_id');
             $grid->column('id')->sortable();
             $grid->column('endpoint.title', 'endpoint');
             $grid->column('title');
+            $grid->column('rule')->hide();
             $grid->column('uri');
+            $grid->column('headers')->hide();
+            $grid->column('body')->hide();
             $grid->column('method')->dropdown(EndpointTarget::methods);
-            $grid->column('headers');
-            $grid->column('body');
             $grid->column('enabled')->switch();
-            $grid->column('updated_at')->sortable();
-        
+            $grid->column('created_at')->hide();
+            $grid->column('updated_at');
+
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
                 $filter->equal('endpoint_id', 'endpoint')->select(Endpoint::pluck('title', 'id'));
                 $filter->equal('enabled')->select(EndpointTarget::enabled);
             });
+
+            $grid->disableColumnSelector(false);
+            $grid->disableRefreshButton();
+            $grid->disableViewButton();
+            $grid->quickSearch(['endpoint.title', 'title']);
         });
     }
 
@@ -45,17 +56,28 @@ class EndpointTargetController extends AdminController
     protected function form()
     {
         return Form::make(new EndpointTarget(), function (Form $form) {
-            
             $form->select('endpoint_id')->options(Endpoint::pluck('title', 'id'))->required();
             $form->text('title')->required();
+            $form->textarea('rule')->rules(function (Form $form) {
+                try {
+                    strlen($form->rule) && (new ExpressionLanguage)->lint($form->rule, ['req', 'now']);
+                } catch (SyntaxError $e) {
+                    return fn (string $attribute, mixed $value, \Closure $fail) => $fail($e->getMessage());
+                }
+            });
             $form->text('uri')->required();
-            $form->radio('method')->options(EndpointTarget::methods)->required();
+            $form->radio('method')->options(EndpointTarget::methods)->default('POST');
             $form->jsoneditor('headers');
-            $form->jsoneditor('body');
-            $form->radio('enabled')->options(EndpointTarget::enabled)->default("1");
-        
-            $form->display('created_at');
-            $form->display('updated_at');
+            $form->jsoneditor('body')->rules(function (Form $form) {
+                try {
+                    foreach(EndpointTarget::parsePlaceHolders($form->body) as $expr) {
+                        (new ExpressionLanguage)->lint($expr, ['req', 'now']);
+                    }
+                } catch (SyntaxError $e) {
+                    return fn (string $attribute, mixed $value, \Closure $fail) => $fail($e->getMessage());
+                }
+            });
+            $form->switch('enabled')->default(1);
         });
     }
 }

@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Dcat Admin',
+    'name' => 'Larelay',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="/vendor/dcat-admin/images/logo.png" width="35"> &nbsp;Dcat Admin',
+    'logo' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="/vendor/dcat-admin/images/logo.png">',
+    'logo-mini' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Admin',
+    'title' => 'Larelay',
 
     /*
     |--------------------------------------------------------------------------
@@ -200,7 +200,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'helpers' => [
-        'enable' => true,
+        'enable' => env('ADMIN_HELPER_ENABLED', false),
     ],
 
     /*
@@ -330,9 +330,9 @@ return [
         'color' => 'default',
 
         // sidebar-separate
-        'body_class' => [],
+        'body_class' => ['custombar'],
 
-        'horizontal_menu' => false,
+        'horizontal_menu' => true,
 
         'sidebar_collapsed' => false,
 
@@ -360,7 +360,7 @@ return [
     |
     | Whether enable default breadcrumb for every page content.
     */
-    'enable_default_breadcrumb' => true,
+    'enable_default_breadcrumb' => false,
 
     /*
     |--------------------------------------------------------------------------

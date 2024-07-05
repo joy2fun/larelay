@@ -18,6 +18,7 @@ class CreateEndpointTargetsTable extends Migration
             $table->unsignedInteger('endpoint_id');
             $table->string('title')->default('');
             $table->string('uri')->default('');
+            $table->text('rule')->nullable();
             $table->string('method')->default('');
             $table->json('headers')->nullable();
             $table->text('body')->nullable();

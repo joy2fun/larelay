@@ -14,8 +14,8 @@ Route::group([
     'middleware' => config('admin.route.middleware'),
 ], function (Router $router) {
 
-    $router->get('/', fn () => admin_redirect('endpoints'));
+    $router->get('/', 'HomeController@index');
     $router->resource('endpoints', EndpointController::class);
-    $router->resource('endpoint-targets', EndpointTargetController::class);
+    $router->resource('endpoints-targets', EndpointTargetController::class);
 
 });

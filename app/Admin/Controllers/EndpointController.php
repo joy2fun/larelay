@@ -15,20 +15,24 @@ class EndpointController extends AdminController
      *
      * @return Grid
      */
-    protected function grid()
+    public function grid()
     {
         return Grid::make(new Endpoint(), function (Grid $grid) {
+            $grid->model()->orderByDesc('id');
             $grid->column('id')->sortable();
-            $grid->column('slug');
-            $grid->column('title');
+            $grid->column('slug')->editable();
+            $grid->column('title')->editable();
             $grid->column('webhook_uri')->display(fn () => '/api/endpoint/' . $this->slug);
             $grid->column('enabled')->switch();
             $grid->column('updated_at')->sortable();
         
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
                 $filter->equal('enabled')->select(Endpoint::enabled);
             });
+
+            $grid->disableRefreshButton();
+            $grid->disableViewButton();
+            $grid->quickSearch(['title', 'slug']);
         });
     }
 
@@ -43,10 +47,7 @@ class EndpointController extends AdminController
             
             $form->text('slug')->required();
             $form->text('title')->required();
-            $form->radio('enabled')->options(Endpoint::enabled)->default("1");
-        
-            $form->display('created_at');
-            $form->display('updated_at');
+            $form->switch('enabled')->default(1);
         });
     }
 }

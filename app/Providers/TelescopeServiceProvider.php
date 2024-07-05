@@ -20,9 +20,16 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $isLocal = $this->app->environment('local');
 
+        Telescope::tag(function (IncomingEntry $entry) {
+            return $entry->isRequest()
+                ? ['status:'.$entry->content['response_status'], 'slug:'.str(request()->path())->afterLast('/')]
+                : [];
+        });
+
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
             return $isLocal ||
                    $entry->isClientRequest() || 
+                   $entry->isLog() ||
                    $entry->isRequest() ||
                    $entry->isReportableException() ||
                    $entry->isFailedRequest() ||

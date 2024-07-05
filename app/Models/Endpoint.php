@@ -10,8 +10,8 @@ class Endpoint extends Model
 	use HasDateTimeFormatter;    
 
     const enabled = [
-        1 => "是",
-        0 => "否",
+        1 => "Yes",
+        0 => "No",
     ];
 
     public function targets()
