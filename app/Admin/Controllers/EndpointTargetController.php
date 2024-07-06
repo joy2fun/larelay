@@ -67,7 +67,15 @@ class EndpointTargetController extends AdminController
             });
             $form->text('uri')->required();
             $form->radio('method')->options(EndpointTarget::methods)->default('POST');
-            $form->jsoneditor('headers');
+            $form->jsoneditor('headers')->rules(function (Form $form) {
+                try {
+                    foreach(EndpointTarget::parsePlaceHolders($form->headers) as $expr) {
+                        (new ExpressionLanguage)->lint($expr, ['req', 'now']);
+                    }
+                } catch (SyntaxError $e) {
+                    return fn (string $attribute, mixed $value, \Closure $fail) => $fail($e->getMessage());
+                }
+            });;
             $form->jsoneditor('body')->rules(function (Form $form) {
                 try {
                     foreach(EndpointTarget::parsePlaceHolders($form->body) as $expr) {

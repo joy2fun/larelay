@@ -32,16 +32,24 @@ class EndpointTarget extends Model
         return $this->belongsTo(Endpoint::class, 'endpoint_id', 'id');
     }
 
-    protected function headersArray(): Attribute
+    public function buildHeaders()
     {
-        return Attribute::make(
-            get: fn () => json_decode($this->headers, true),
-        );
+        $headers = json_decode($this->headers, true);
+        if (! $headers) {
+            return request()->headers->all();
+        }
+        $placeholders = self::parsePlaceHolders($headers);
+        $trans = $this->evaluatePlaceholdersAsTrans($placeholders);
+        $this->evaluateArrayValues($headers, $trans);
+        return $headers;
     }
 
     public function buildBody()
     {
         $body = json_decode($this->body, true);
+        if (! $body) {
+            return request()->all();
+        }
         $placeholders = self::parsePlaceHolders($body);
         $trans = $this->evaluatePlaceholdersAsTrans($placeholders);
         $this->evaluateArrayValues($body, $trans);
