@@ -22,7 +22,7 @@ docker run --name larelay -p 8000:80 \
 docker exec -it larelay php artisan key:generate
 
 # run admin database migration and seeding
-php artisan admin:install
+docker exec -it larelay php artisan admin:install
 ```
 
 Now you can head to `http://localhost:8000/admin` and login using default account: `admin` .
