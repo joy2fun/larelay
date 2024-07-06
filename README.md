@@ -1,30 +1,48 @@
 
-### envs
+# Larelay
+
+Larelay is a tool that allows you to define webhook endpoints and then forward the requests received by those endpoints to other URL targets.
+
+Features:
+  - Includes a built-in web-based control panel
+  - Ability to fan out (forward) requests to multiple URL targets
+  - Filtering rules
+  - Customize the headers and body of forwarded requests using templates
+
+## Install
+
+### Using Docker
 
 ```sh
-APP_NAME=larest
-ADMIN_ROOT_USERNAME=root
-ADMIN_ROOT_PASSWORD_HASH=''
+docker run --name larelay -p 8000:80 \
+    -e ADMIN_ROOT_PASSWORD=your-password \
+    ghcr.io/joy2fun/larelay:master
 
-DB_CONNECTION=mysql
-DB_HOST=
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-DB_PREFIX=
+# generate app key
+docker exec -it larelay php artisan key:generate
 
-#TELESCOPE_PATH=
-#HORIZON_PATH=
-#ADMIN_DB_PREFIX=x_
-#ADMIN_ROUTE_PREFIX=admin
-#ADMIN_ENABLE_OMNI=true
+# run admin database migration and seeding
+php artisan admin:install
 ```
 
-### setup
+Now you can head to `http://localhost:8000/admin` and login using default account: `admin` .
+
+### Available Enviroment Variables
+
 ```sh
-php artisan key:generate
-php artisan admin:install
-# upgrade dcat. optional
-composer upgrade dcat/laravel-admin
-# php artisan vendor:publish --force
+# default administrator account
+ADMIN_ROOT_USERNAME=admin
+ADMIN_ROOT_PASSWORD=admin
+
+# default administrator panel route path prefix
+ADMIN_ROUTE_PREFIX=admin
+
+# set to true if larelay is behind reverse proxy and accessed via https
+ADMIN_HTTPS=false
+
+# locale
+LOCALE: "en"
+
+# timezone
+TZ: "UTC"
 ```
