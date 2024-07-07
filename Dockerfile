@@ -8,4 +8,9 @@ RUN curl -o /usr/local/bin/composer https://getcomposer.org/download/latest-stab
     && chmod +x /usr/local/bin/composer; \
     composer install -n --ignore-platform-reqs --no-dev --no-progress --optimize-autoloader \
     && composer clear-cache \
-    && mv .env.example .env
+    && mv .env.example .env \
+    && mkdir -p database/larelay \
+    && touch database/larelay/database.sqlite \
+    && chown -R www-data:www-data database
+
+VOLUME /var/www/html/database/larelay
