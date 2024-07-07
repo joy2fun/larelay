@@ -34,7 +34,7 @@ class EndpointTarget extends Model
 
     public function buildHeaders()
     {
-        $headers = json_decode($this->headers, true);
+        $headers = json_decode($this->headers ?? '', true);
         if (! $headers) {
             return request()->headers->all();
         }
@@ -46,7 +46,7 @@ class EndpointTarget extends Model
 
     public function buildBody()
     {
-        $body = json_decode($this->body, true);
+        $body = json_decode($this->body ?? '', true);
         if (! $body) {
             return request()->all();
         }
