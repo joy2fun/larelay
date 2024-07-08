@@ -22,7 +22,7 @@ class EndpointController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('slug')->editable();
             $grid->column('title')->editable();
-            $grid->column('webhook_uri')->display(fn () => '/api/endpoint/' . $this->slug);
+            $grid->column('url')->link(null, '_blank');
             $grid->column('enabled')->switch();
             $grid->column('updated_at')->sortable();
         

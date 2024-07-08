@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Log;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -36,7 +35,8 @@ class EndpointTarget extends Model
     {
         $headers = json_decode($this->headers ?? '', true);
         if (! $headers) {
-            return request()->headers->all();
+            // pass through all headers except the "host"
+            return collect(request()->headers->all())->except("host")->toArray();
         }
         $placeholders = self::parsePlaceHolders($headers);
         $trans = $this->evaluatePlaceholdersAsTrans($placeholders);
@@ -59,7 +59,7 @@ class EndpointTarget extends Model
     public static function parsePlaceHolders($input)
     {
         if (is_scalar($input)) {
-            $array = json_decode($input, true);
+            $array = json_decode($input ?? '', true);
             if (! $array) {
                 return [];
             }

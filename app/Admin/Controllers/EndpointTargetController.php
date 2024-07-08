@@ -4,14 +4,12 @@ namespace App\Admin\Controllers;
 
 use App\Models\Endpoint;
 use App\Models\EndpointTarget;
-use Dcat\Admin\Exception\AdminException;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Validator;
 
 class EndpointTargetController extends AdminController
 {
@@ -25,7 +23,7 @@ class EndpointTargetController extends AdminController
         return Grid::make(EndpointTarget::with('endpoint'), function (Grid $grid) {
             $grid->model()->orderByDesc('endpoint_id');
             $grid->column('id')->sortable();
-            $grid->column('endpoint.title', 'endpoint');
+            $grid->column('endpoint.url', 'endpoint');
             $grid->column('title');
             $grid->column('rule')->hide();
             $grid->column('uri');
@@ -37,7 +35,7 @@ class EndpointTargetController extends AdminController
             $grid->column('updated_at');
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('endpoint_id', 'endpoint')->select(Endpoint::pluck('title', 'id'));
+                $filter->equal('endpoint_id', 'endpoint')->select(Endpoint::all()->pluck('url', 'id'));
                 $filter->equal('enabled')->select(EndpointTarget::enabled);
             });
 
@@ -56,7 +54,7 @@ class EndpointTargetController extends AdminController
     protected function form()
     {
         return Form::make(new EndpointTarget(), function (Form $form) {
-            $form->select('endpoint_id')->options(Endpoint::pluck('title', 'id'))->required();
+            $form->select('endpoint_id', 'Endpoint')->options(Endpoint::all()->pluck('title-and-url', 'id'))->required();
             $form->text('title')->required();
             $form->textarea('rule')->rules(function (Form $form) {
                 try {
