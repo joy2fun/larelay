@@ -33,4 +33,11 @@ class Endpoint extends Model
             get: fn() => sprintf("/api/endpoint/%s - %s", $this->slug, $this->title),
         );
     }
+
+    public function telescopeUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => sprintf("/%s/requests?tag=slug:%s", config('telescope.path'), $this->slug),
+        );
+    }
 }

@@ -78,4 +78,4 @@ Rename the `message` parameter to `error` before forwarding the request to the t
 ## Debugging
 
 Larelay is shipped with integration for [Laravel Telescope](https://laravel.com/docs/11.x/telescope)
-, which allows you to easily inspect all incoming requests and forwarded requests.
+, which allows you to easily inspect all incoming requests and forwarded requests (HTTP Client requests in Laravel).

@@ -24,6 +24,7 @@ class EndpointController extends AdminController
             $grid->column('title')->editable();
             $grid->column('url')->link(null, '_blank');
             $grid->column('enabled')->switch();
+            $grid->column('telescope')->display(fn() => '<i class="fa fa-search"></i>')->link(fn() => $this->telescope_url, '_blank');
             $grid->column('updated_at')->sortable();
         
             $grid->filter(function (Grid\Filter $filter) {

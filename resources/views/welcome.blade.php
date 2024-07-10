@@ -39,12 +39,6 @@
         </a>
     </div>
     <div class="col-4">
-        <a class="item" target="_blank" href="{{config('telescope.path')}}">
-            <div class="icon"><i class="fa fa-bug"></i></div>
-            <div class="text">Telescope</div>
-        </a>
-    </div>
-    <div class="col-4">
         <a class="item" href="{{admin_url('auth/logout')}}">
             <div class="icon"><i class="fa fa-sign-out"></i></div>
             <div class="text">Logout</div>

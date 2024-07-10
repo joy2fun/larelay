@@ -26,11 +26,12 @@ class EndpointTargetController extends AdminController
             $grid->column('endpoint.url', 'endpoint');
             $grid->column('title');
             $grid->column('rule')->hide();
-            $grid->column('uri');
+            $grid->column('uri')->hide();
             $grid->column('headers')->hide();
             $grid->column('body')->hide();
             $grid->column('method')->dropdown(EndpointTarget::methods);
             $grid->column('enabled')->switch();
+            $grid->column('telescope')->display(fn() => '<i class="fa fa-search"></i>')->link(fn() => $this->telescope_url, '_blank');
             $grid->column('created_at')->hide();
             $grid->column('updated_at');
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Log;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -31,16 +32,28 @@ class EndpointTarget extends Model
         return $this->belongsTo(Endpoint::class, 'endpoint_id', 'id');
     }
 
+    public function telescopeUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => sprintf("/%s/client-requests?tag=target:%s", config('telescope.path'), $this->id),
+        );
+    }
+
     public function buildHeaders()
     {
         $headers = json_decode($this->headers ?? '', true);
         if (! $headers) {
             // pass through all headers except the "host"
-            return collect(request()->headers->all())->except("host")->toArray();
+            $headers = collect(request()->headers->all())->except("host")->toArray();
+        } else {
+            $placeholders = self::parsePlaceHolders($headers);
+            $trans = $this->evaluatePlaceholdersAsTrans($placeholders);
+            $this->evaluateArrayValues($headers, $trans);
         }
-        $placeholders = self::parsePlaceHolders($headers);
-        $trans = $this->evaluatePlaceholdersAsTrans($placeholders);
-        $this->evaluateArrayValues($headers, $trans);
+
+        // append a special header for tagging telescope entity
+        $headers['x-target-id'] = $this->id;
+
         return $headers;
     }
 
